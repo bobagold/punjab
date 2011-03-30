@@ -12,8 +12,14 @@ try:
     from twisted.words.xish import domish
 except ImportError:
     from twisted.xish import domish
-
-import sha, time
+try:
+    import hashlib
+    sha_new = hashlib.sha1
+except ImportError:
+    # for Python << 2.5
+    import sha
+    sha_new = sha.new
+import time
 import error
 from session import make_session
 import punjab
@@ -719,7 +725,7 @@ class HttpbService(punjab.Service):
             try:
                 if body.hasAttribute('key') and not foundNewKey:
                     if s.key is not None:
-                        nk = sha.new(body['key'])
+                        nk = sha_new(body['key'])
                         key = nk.hexdigest()
                         next_key = body['key']
                         if key == s.key:

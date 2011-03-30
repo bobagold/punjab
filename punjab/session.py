@@ -15,7 +15,13 @@ except ImportError:
 
 import traceback
 import random
-import md5
+try:
+    import hashlib
+    md5_new = hashlib.md5
+except ImportError:
+    # for Python << 2.5
+    import md5
+    md5_new = md5.new
 from punjab import jabber
 from punjab.xmpp import ns
 
@@ -63,7 +69,7 @@ def make_session(pint, attrs, session_type='BOSH'):
 
     # this may need some work, idea, code taken from twisted.web.server
     pint.counter = pint.counter + 1
-    sid  = md5.new("%s_%s_%s" % (str(time.time()), str(random.random()) , str(pint.counter))).hexdigest()
+    sid  = md5_new("%s_%s_%s" % (str(time.time()), str(random.random()) , str(pint.counter))).hexdigest()
 
 
     s    = Session(pint, sid, attrs)
