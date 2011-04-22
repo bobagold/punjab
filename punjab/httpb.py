@@ -10,6 +10,19 @@ from zope.interface import Interface, implements
 
 try:
     from twisted.words.xish import domish
+    class _ListSerializer(domish._ListSerializer):
+        """ some desc """
+        def getValue(self):
+            try:
+                return u"".join(self.writelist)
+            except:
+                ret = "".join(self.writelist)
+                log.msg("xml %s" % ret);
+                if type(ret) == type(''):
+                    ret = unicode(ret, 'utf-8')
+            return ret
+
+    domish.SerializerClass = _ListSerializer;
 except ImportError:
     from twisted.xish import domish
 try:
