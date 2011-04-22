@@ -190,7 +190,17 @@ class QueryFactory(protocol.ClientFactory):
             
 
 
-import random, sha, md5
+import random
+try:
+    import hashlib
+    md5_new = hashlib.md5
+    sha_new = hashlib.sha1
+except ImportError:
+    # for Python << 2.5
+    import md5
+    md5_new = md5.new
+    import sha
+    sha_new = sha.new
 
 class Keys:
     """ A class to generate keys for http binding """
@@ -205,7 +215,7 @@ class Keys:
         self.k.append(seed)
         for i in range(self.num_keys-1):
             x = i + 1
-            self.k.append(sha.new(str(self.k[x-1])).hexdigest())
+            self.k.append(sha_new(str(self.k[x-1])).hexdigest())
 
         self.key_index = self.num_keys - 1
     
